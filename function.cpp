@@ -5,7 +5,7 @@
 using namespace std;
 
 string shop_name[10005];
-int num_people[MAX_TIME];
+int* num_people;
 int arrive_time[10005];
 
 template < class T >
@@ -31,6 +31,7 @@ void mySort(T* arr, int l, int r){
 
 // TODO: Implement the function to read input, process data, and output answers.
 void solve() {
+    num_people = (int*)malloc(MAX_TIME * sizeof(int));
     int n, m, ar, le, np;
     cin >> n;
     for (int i = 0 ; i < n ; i++) {
