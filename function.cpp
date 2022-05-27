@@ -1,12 +1,26 @@
 #include <iostream>
 #include "function.h"
 
-#define MAX_TIME 100000000
 using namespace std;
+struct time_active{
+    int np;
+    int time;
+};
 
 string shop_name[10005];
 int* num_people;
 int arrive_time[10005];
+time_active active[20010];
+
+
+bool operator>(time_active A, time_active B){
+    return A.time > B.time;
+}
+
+bool operator>=(time_active A, time_active B){
+    return A.time >= B.time;
+}
+    
 
 template < class T >
 void mySort(T* arr, int l, int r){
@@ -29,26 +43,39 @@ void mySort(T* arr, int l, int r){
     }
 }
 
+int main(void) {
+    solve();
+    return 0;
+}
+
 // TODO: Implement the function to read input, process data, and output answers.
+
 void solve() {
-    num_people = (int*)malloc(MAX_TIME * sizeof(int));
     int n, m, ar, le, np;
     cin >> n;
     for (int i = 0 ; i < n ; i++) {
         cin >> np >> ar >> le >> shop_name[i];
         arrive_time[i] = ar;
-        for (int j = ar - 1 ; j < le - 1 ; j++)
-            num_people[j] += np;
+        active[2 * i] = {np, ar};
+        active[2 * i + 1] = {-np, le};
     }
 
     mySort<string>(shop_name, 0, n - 1);
     mySort<int>(arrive_time, 0, n - 1);
+    mySort<time_active>(active, 0, 2*n - 1);
+    int* number_of_people = (int*)malloc(2 * n * sizeof(int));
     int max_time, max_peo = 0;
-    for(int i = 0 ; i < MAX_TIME ; i++) {
-        if (max_peo < num_people[i]) {
-            max_peo = num_people[i];
-            max_time = i + 1;
+    int ti = active[0].time;
+    int nup = active[0].np;
+    for (int i = 1 ; i < 2*n ; i++) {
+        if(ti != active[i].time){
+            if(nup > max_peo) {
+                max_peo = nup;
+                max_time = ti;
+            }
+            ti = active[i].time;
         }
+        nup += active[i].np;
     }
 
     cin >> m;
@@ -63,7 +90,22 @@ void solve() {
         else if(instrction == "TRAFFIC_AT") {
             int time;
             cin >> time;
-            cout << num_people[time] << endl;
+            if (time < active[0].time) cout << 0 << endl;
+            else if (time >= active[2*n - 1].time) cout << 0 << endl;
+            else {
+                int ti = active[0].time;
+                int nup = active[0].np;
+                for (int i = 1 ; i < 2*n ; i++) {
+                    if(ti != active[i].time){
+                        if(time <= ti) {
+                            cout << nup << endl;
+                            break;
+                        }
+                        ti = active[i].time;
+                    }
+                    nup += active[i].np;
+                }
+            }
         }
         else if(instrction == "MAX_TRAFFIC") {
             cout << max_time << " " << max_peo << endl;

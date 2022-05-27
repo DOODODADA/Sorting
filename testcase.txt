@@ -1,0 +1,9 @@
+3
+2 2 6 Suhai
+3 1 3 Sanku
+1 4 6 FamilyMart
+4
+TIME_ARRIVE 2
+TRAFFIC_AT 3
+MAX_TRAFFIC
+STORE_LIST
